@@ -1,0 +1,12 @@
+digraph MyPlan {
+   node [margin="0.01"];
+
+   "box1" [shape="box", label="Надпись в\nдве строки"];
+   "box2" [shape="box", style="filled", fillcolor="lightcyan2", label=<Обычная надпись<BR /><FONT COLOR="blue" POINT-SIZE="8">вторая строка другим шрифтом и цветом</FONT>>];
+   "box3" [shape="record", label = "Слева|Справа"];
+   "box4" [shape="record", label = "{Сверху|Снизу}"];
+   "box5" [shape="record", label = "Слева|{Сверху|Центр|Снизу}|Справа"];
+
+   "box1" -> "box2";
+   "box3" -> "box4" -> box5;
+}
