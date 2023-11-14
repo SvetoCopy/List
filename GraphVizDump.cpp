@@ -24,13 +24,20 @@ int DefineListNode(List* list) {
 }
 
 int ConnectListNodes(List* list) {
-	for (int i = 0; i < list->size + 1; i++) {
-		Node node1 = list->list_arr[i];
-		int next = node1.next;   
+	Node node1 = list->list_arr[list->head];
+
+	while (node1.next != list->tail) {
+		int next = node1.next;
 		Node node2 = list->list_arr[next];
 		fprintf(list->logger, "node%d->node%d;\n", node1.ind, node2.ind);
+		node1 = node2;
 	}
+	int next = node1.next;
+	Node node2 = list->list_arr[next];
+	fprintf(list->logger, "node%d->node%d;\n", node1.ind, node2.ind);
+
 	for (int i = list->free.size - 1; i > 0; i--) {
+		printf("%d->%d\n", list->free.data[i], list->free.data[i - 1]);
 		fprintf(list->logger, "node%d->node%d;\n", list->free.data[i], list->free.data[i - 1]);
 	}
 	return 0;

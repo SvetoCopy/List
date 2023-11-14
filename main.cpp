@@ -4,12 +4,12 @@ int main()
 {
     List a;
     ListCtor(&a, 4);
-    //ListDump(&a);
-    ListInsertEnd(&a, 13);
-    ListInsertEnd(&a, 22);
-    ListInsertStart(&a, 1);
-
-    ListRealloc(&a, 8);
+    ListDump(&a);
+    ListInsertEnd(&a, 1);
+    ListInsertBefore(&a, 2, 1);
+    ListInsertEnd(&a, 3);
+    ListInsertEnd(&a, 4);
     PrintList(&a);
+    return 0;
 }
 

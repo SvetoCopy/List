@@ -1,7 +1,7 @@
 #include "List.h"
 #include "assert.h"
 
-int NodeCtor(Node* node, Elem_t value, int next, int prev, int ind) {
+int NodeCtor(Node* node, ListElem_t value, int next, int prev, int ind) {
 	node->data = value;
 	node->next = next;
 	node->prev = prev;
@@ -83,33 +83,38 @@ Node* FindNode(List* list, int ind) {
 	return Node_var;
 }
 
-int ListDelete(List* list, int ind) {
-	Node* delete_node = FindNode(list, ind);
-	list->list_arr[delete_node->prev].next = list->list_arr[delete_node->ind].next;
-	list->list_arr[delete_node->next].prev = list->list_arr[delete_node->ind].prev;
+int ListDeleteNode(List* list, Node delete_node) {
+	list->list_arr[delete_node.prev].next = list->list_arr[delete_node.ind].next;
+	list->list_arr[delete_node.next].prev = list->list_arr[delete_node.ind].prev;
 	list->size--;
 	return 0;
 }
 
-int ListRealloc(List* list, int capacity) {
-	if (capacity > list->capacity) {
-		ListDump(list);
-		list->list_arr = (Node*)realloc(list->list_arr, capacity * sizeof(Node));
+int ListDelete(List* list, int arr_ind) {
+	Node delete_node = list->list_arr[arr_ind];
+	ListDeleteNode(list, delete_node);
+	return 0;
+}
 
-		assert(list->list_arr != nullptr);
-
-		ListDump(list);
-		for (int i = capacity; i > list->capacity - 1; i--) {
-			StackPush(&list->free, i);
-			Node node = {};
-			if (i == capacity)           NodeCtor(&node, -1, -1, -1, i);
-			else                         NodeCtor(&node, -1, i + 1, -1, i);
+int ListReallocUp(List* list, int capacity) {
 	
-			list->list_arr[i] = node;
-		}
-		list->capacity = capacity + 1;
-		ListDump(list);
+	list->list_arr = (Node*)realloc(list->list_arr, (capacity + 1) * sizeof(Node));
+
+	assert(list->list_arr != nullptr);
+
+	ListDump(list);
+		
+	for (int i = capacity; i > list->capacity - 1; i--) {
+		StackPush(&list->free, i);
+		Node node = {};
+		if (i == capacity) NodeCtor(&node, -1, -1, -1, i);
+		else               NodeCtor(&node, -1, i + 1, -1, i);
+			
+		list->list_arr[i] = node;
 	}
+	list->capacity = capacity + 1;
+	ListDump(list);
+	
 
 	
 	return 0;
@@ -139,7 +144,9 @@ int GetFreePlace(List* list) {
 	return free_id;
 }
 
-int ListInsertStart(List* list, Elem_t value) {
+int ListInsertStart(List* list, ListElem_t value) {
+	if (list->size > list->capacity / 2) ListReallocUp(list, list->capacity * 2);
+
 	int free_id = GetFreePlace(list);
 	if (free_id == LIST_ERROR) return LIST_ERROR;
 
@@ -150,7 +157,9 @@ int ListInsertStart(List* list, Elem_t value) {
 	return free_id;
 }
 
-int ListInsertEnd(List* list, Elem_t value) {
+int ListInsertEnd(List* list, ListElem_t value) {
+	if (list->size > list->capacity / 2) ListReallocUp(list, list->capacity * 2);
+
 	int free_id = GetFreePlace(list);
 	if (free_id == LIST_ERROR) return LIST_ERROR;
 
@@ -161,14 +170,16 @@ int ListInsertEnd(List* list, Elem_t value) {
 	return free_id;
 }
 
-int ListInsert(List* list, Elem_t value, int ind) {
+int ListInsertBefore(List* list, ListElem_t value, int arr_ind) {
+	if (list->size > list->capacity / 2) ListReallocUp(list, list->capacity * 2);
+
 	int free_id = GetFreePlace(list);
 	if (free_id == LIST_ERROR) return LIST_ERROR;
 
 	Node new_node = {};
 	
-	Node* old_node = FindNode(list, ind);
-	NodeCtor(&new_node, value, old_node->ind, old_node->prev, free_id);
+	Node old_node = list->list_arr[arr_ind];
+	NodeCtor(&new_node, value, old_node.ind, old_node.prev, free_id);
 
 	ListInsertNode(list, new_node, free_id);
 	return free_id;
