@@ -4,23 +4,30 @@
 
 typedef int ListElem_t;
 const int LIST_ERROR = -1;
+const int LIST_POISON = -1;
 
 struct Node {
-	int ind;
+	int        ind;
 	ListElem_t data;
-	int next;
-	int prev;
+	int        next;
+	int        prev;
+};     
+      
+struct FreeNode {
+	int       ind;
+	FreeNode* next;
 };
 
 struct List {
 	Node* list_arr;
-	Stack free;
-	int size;
-	int capacity;
-	int head;
-	int tail;
+	int   free;
+	int   size;
+	int   capacity;
+	int   head;
+	int   tail;
 	FILE* logger;
 };
+
 int NodeCtor(Node* node, ListElem_t value, int next, int prev, int ind);
 
 int ListCtor(List* list, int capacity);
