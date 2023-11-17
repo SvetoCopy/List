@@ -30,7 +30,7 @@ struct List {
 
 int NodeCtor(Node* node, ListElem_t value, int next, int prev, int ind);
 
-int ListCtor(List* list, int capacity);
+int ListCtor(List* list, int capacity, const char* name);
 int ListDtor(List* list);
 int ListVerify(List* list);
 int ListDump(List* list);

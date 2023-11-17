@@ -20,7 +20,7 @@ int NodeDump(Node* node) {
 	return 0;
 }
 
-int ListCtor(List* list, int capacity) {
+int ListCtor(List* list, int capacity, const char* name) {
 
 	assert(list != nullptr);
 
@@ -29,7 +29,7 @@ int ListCtor(List* list, int capacity) {
 
 	assert(list->list_arr != nullptr);
 
-	fopen_s(&list->logger, "Grapg_log.gv", "w");
+	fopen_s(&list->logger, name, "w");
 	list->free = 1;
 
 	for (int i = list->capacity - 1; i > 0; i--) {
@@ -59,6 +59,9 @@ int ListDtor(List* list) {
 }
 
 int ListVerify(List* list) {
+	assert(list != nullptr);
+	assert(list->list_arr != nullptr);
+
 	if (list->head > list->tail)     fprintf(stderr, "head > tail\n");
 	if (list->size > list->capacity) fprintf(stderr, "size > capacity\n");
 	if (list->list_arr == nullptr)   fprintf(stderr, "list - nullptr\n");
@@ -69,6 +72,8 @@ int ListVerify(List* list) {
 	return 0;
 }
 int ListDump(List* list) {
+	assert(list != nullptr);
+
 	printf("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 	printf("\nDUMP:\ncapacity: %d\nsize: %d\nhead: %d\ntail: %d\nfree: %d\n\n", 
 		list->capacity, list->size, list->head, list->tail, list->free);
@@ -81,6 +86,9 @@ int ListDump(List* list) {
 }
 
 Node* FindNode(List* list, int ind) {
+	assert(list != nullptr);
+	assert(list->list_arr != nullptr);
+
 	int i = 0;
 	Node* Node_var = &NODE(list->head);
 	while (i < ind) {
@@ -91,6 +99,8 @@ Node* FindNode(List* list, int ind) {
 }
 
 int ListDeleteNode(List* list, Node delete_node) {
+	assert(list != nullptr);
+	assert(list->list_arr != nullptr);
 	NEXT(delete_node.prev) = NEXT(delete_node.ind);
 	PREV(delete_node.next) = PREV(delete_node.ind);
 	list->size--;
@@ -98,23 +108,26 @@ int ListDeleteNode(List* list, Node delete_node) {
 }
 
 int ListDelete(List* list, int arr_ind) {
+	assert(list != nullptr);
+	assert(list->list_arr != nullptr);
+
 	Node delete_node = NODE(arr_ind);
 	ListDeleteNode(list, delete_node);
 
 	NEXT(arr_ind) = list->free;
 	PREV(arr_ind) = LIST_POISON;
-	list->free = arr_ind;
+	list->free    = arr_ind;
 
 	return 0;
 }
 
 int ListReallocUp(List* list, int capacity) {
-	
+	assert(list != nullptr);
+
 	list->list_arr = (Node*)realloc(list->list_arr, (capacity + 1) * sizeof(Node));
 
 	assert(list->list_arr != nullptr);
 
-	
 	for (int i = capacity; i > list->capacity - 1; i--) {
 		Node node = {};
 		if (i == capacity) NodeCtor(&node, LIST_POISON, list->free, LIST_POISON, i);
@@ -155,6 +168,9 @@ int GetFreePlace(List* list) {
 }
 
 int ListInsertStart(List* list, ListElem_t value) {
+	assert(list != nullptr);
+	assert(list->list_arr != nullptr);
+
 	if (list->size > list->capacity / 2) ListReallocUp(list, list->capacity * 2);
 
 	int free_id = GetFreePlace(list);
@@ -168,6 +184,9 @@ int ListInsertStart(List* list, ListElem_t value) {
 }
 
 int ListInsertEnd(List* list, ListElem_t value) {
+	assert(list != nullptr);
+	assert(list->list_arr != nullptr);
+
 	if (list->size > list->capacity / 2) ListReallocUp(list, list->capacity * 2);
 
 	int free_id = GetFreePlace(list);
@@ -181,6 +200,9 @@ int ListInsertEnd(List* list, ListElem_t value) {
 }
 
 int ListInsertBefore(List* list, ListElem_t value, int arr_ind) {
+	assert(list != nullptr);
+	assert(list->list_arr != nullptr);
+
 	if (list->size > list->capacity / 2) ListReallocUp(list, list->capacity * 2);
 
 	int free_id = GetFreePlace(list);
